@@ -1,0 +1,11 @@
+[Unit]
+Description=Restart gpsd if chrony's GPS refclock has gone stale (silent SHM starvation)
+Documentation=https://gpsd.io/
+# Complements 99-gps-rearm.rules: that catches USB re-enumeration; this catches
+# gpsd silently dropping its NTP SHM export with the tty still present.
+After=chronyd.service gpsd.service
+Wants=chronyd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gps-watchdog.sh

@@ -1,0 +1,13 @@
+[Unit]
+Description=Periodic GPS refclock staleness check (re-arms gpsd)
+Documentation=https://gpsd.io/
+
+[Timer]
+# First check 3 min after boot (let gpsd/chrony settle), then every 2 min.
+OnBootSec=3min
+OnUnitActiveSec=2min
+AccuracySec=20s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,10 @@
+# Give the GPIO PPS device a stable name: /dev/pps-gps
+#
+# The pps-gpio overlay registers a kernel PPS source whose name encodes the
+# device-tree node (e.g. "pps@12" for gpiopin=18). chrony's gps.conf refers to
+# /dev/pps-gps, so we pin a stable symlink regardless of pps0/pps1 numbering.
+#
+# If you use a DIFFERENT GPIO pin, the name changes. Find yours with:
+#     cat /sys/class/pps/pps0/name
+# and update the ATTR{name} match below to "<that-name>*".
+SUBSYSTEM=="pps", ATTR{name}=="pps@12*", SYMLINK+="pps-gps"

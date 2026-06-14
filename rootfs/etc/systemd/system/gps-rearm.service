@@ -1,0 +1,13 @@
+[Unit]
+Description=Re-arm gpsd after u-blox GNSS USB re-enumeration
+Documentation=https://gpsd.io/
+# Triggered by /etc/udev/rules.d/99-gps-rearm.rules when the u-blox tty appears.
+After=gpsd.service
+
+[Service]
+Type=oneshot
+# Let the tty and USB endpoint settle before re-opening the device.
+ExecStartPre=/bin/sleep 3
+# Full restart forces gpsd to drop the stale fd and re-open the device, which
+# restores the NTP SHM (NMEA) export. --no-block so this oneshot returns promptly.
+ExecStart=/bin/systemctl --no-block restart gpsd.service

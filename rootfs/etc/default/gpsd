@@ -1,0 +1,12 @@
+# gpsd defaults for a GPS-disciplined stratum-1 NTP server.
+#
+# DEVICES: the u-blox GNSS receiver's serial device. On a Pi it usually
+#          enumerates as /dev/ttyACM0 (USB CDC-ACM). Verify with `dmesg | grep tty`.
+# -n     : start polling the receiver immediately, without waiting for a client.
+#          REQUIRED so gpsd feeds chrony's SHM refclock at boot.
+# USBAUTO=false: we manage the device explicitly (DEVICES + the gps-rearm udev
+#          rule); the stock hotplug path holds a stale fd after re-enumeration.
+DEVICES="/dev/ttyACM0"
+GPSD_OPTIONS="-n"
+USBAUTO="false"
+START_DAEMON="true"

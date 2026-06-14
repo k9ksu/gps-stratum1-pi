@@ -1,0 +1,17 @@
+# Re-arm gpsd when the u-blox GNSS receiver (re)enumerates on USB.
+#
+# After a USB re-enumeration gpsd keeps running but stops exporting time to its
+# NTP SHM segment (unit 0), starving chrony's NMEA refclock. Because the GPIO
+# PPS source is "lock NMEA", PPS then goes unusable too and chrony falls back to
+# internet servers (stratum 3) until gpsd is restarted. The stock gpsdctl@
+# hotplug path is insufficient here (static-device gpsd holds a stale fd), so we
+# force a full gpsd restart on device 'add'.
+#
+# PPS is on a GPIO pin (pps@12 -> /dev/pps-gps), which is STABLE across USB
+# re-enumeration, so chrony's PPS fd stays valid and re-locks automatically once
+# NMEA returns. chrony is therefore intentionally NOT restarted (avoids stepping
+# the clock on every USB blip).
+#
+# idVendor/idProduct below are for a u-blox 8 (1546:01a8). For a different
+# receiver, find yours with: lsusb  (or `udevadm info -a -n /dev/ttyACM0`).
+ACTION=="add", SUBSYSTEM=="tty", ATTRS{idVendor}=="1546", ATTRS{idProduct}=="01a8", TAG+="systemd", ENV{SYSTEMD_WANTS}="gps-rearm.service"
